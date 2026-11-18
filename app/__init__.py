@@ -2,7 +2,7 @@ import os
 
 from flask import Flask
 
-from app.models import User, db
+from app.models import Server, User, db  # noqa: F401 — Server registers metadata
 
 # Demo-only default password (stored hashed). Documented in README.
 DEFAULT_ADMIN_USERNAME = "admin"

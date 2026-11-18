@@ -5,6 +5,9 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 db = SQLAlchemy()
 
+# Demo inventory cap (PRD option A).
+MAX_SERVERS = 3
+
 
 class User(db.Model):
     """Minimal demo user for session-based sign-in."""
@@ -23,3 +26,16 @@ class User(db.Model):
 
     def check_password(self, password: str) -> bool:
         return check_password_hash(self.password_hash, password)
+
+
+class Server(db.Model):
+    """Linux server inventory entry (display-only IP/hostname for this demo)."""
+
+    __tablename__ = "servers"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    ip_hostname = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(
+        db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc)
+    )

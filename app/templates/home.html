@@ -1,18 +1,97 @@
 {% extends "base.html" %}
 
-{% block title %}Home — Demo Monitoring{% endblock %}
+{% block title %}Dashboard — Demo Monitoring{% endblock %}
 
 {% block content %}
-<section class="hero">
-  <p class="eyebrow">Local Linux demo</p>
-  <h1>Demo Monitoring Infrastructure</h1>
-  <p class="lede">
-    {% if username %}
-      Signed in as <strong>{{ username }}</strong>.
-    {% endif %}
-    Read-only CPU and memory monitoring for local Linux servers — inventory
-    and live metrics come in later steps.
-  </p>
-  <p class="status-pill">Step 1 — basic UI ready</p>
+<section class="dashboard-header">
+  <div>
+    <p class="eyebrow">Local Linux demo</p>
+    <h1>Monitoring dashboard</h1>
+    <p class="lede">
+      Read-only <strong>CPU %</strong> and <strong>memory</strong> from this machine
+      (localhost). Inventory IP/hostname is for display only — not used for remote collection.
+      {% if username %}Signed in as <strong>{{ username }}</strong>.{% endif %}
+    </p>
+  </div>
+  <div class="dashboard-actions">
+    <a class="btn btn-secondary" href="{{ url_for('main.refresh') }}">Refresh metrics</a>
+  </div>
+</section>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <ul class="flash-list">
+      {% for category, message in messages %}
+        <li class="flash flash-{{ category }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<section class="panel">
+  <div class="panel-heading">
+    <h2>Servers</h2>
+    <p class="panel-meta">{{ server_count }} / {{ max_servers }} · metrics source: {{ metrics.source }}</p>
+  </div>
+
+  {% if servers %}
+    <div class="table-wrap">
+      <table class="server-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>IP / hostname</th>
+            <th>CPU</th>
+            <th>Memory used</th>
+            <th>Memory free</th>
+            <th>Memory total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for server in servers %}
+            <tr>
+              <td>{{ server.name }}</td>
+              <td><code>{{ server.ip_hostname }}</code></td>
+              <td>{{ "%.1f"|format(metrics.cpu_percent) }}%</td>
+              <td>{{ metrics.memory.used_human }}</td>
+              <td>{{ metrics.memory.free_human }}</td>
+              <td>{{ metrics.memory.total_human }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="hint">Values update only when you click <strong>Refresh metrics</strong> (manual only).</p>
+  {% else %}
+    <div class="empty-state">
+      <p>No servers yet. Add up to {{ max_servers }} Linux inventory entries below.</p>
+    </div>
+  {% endif %}
+</section>
+
+<section class="panel">
+  <div class="panel-heading">
+    <h2>Add server</h2>
+    <p class="panel-meta">Name + IP/hostname · max {{ max_servers }}</p>
+  </div>
+
+  {% if can_add %}
+    <form class="add-form" method="post" action="{{ url_for('main.add_server') }}" autocomplete="off">
+      <div class="field">
+        <label for="name">Name</label>
+        <input id="name" name="name" type="text" maxlength="80" required placeholder="e.g. local-demo">
+      </div>
+      <div class="field">
+        <label for="ip_hostname">IP / hostname</label>
+        <input id="ip_hostname" name="ip_hostname" type="text" maxlength="255" required placeholder="e.g. 127.0.0.1">
+      </div>
+      <button class="btn" type="submit">Add server</button>
+    </form>
+    <p class="hint">CSRF tokens are not enabled in this local demo — do not expose beyond localhost.</p>
+  {% else %}
+    <div class="empty-state">
+      <p>Demo limit reached ({{ max_servers }} servers). Remove entries from the DB to add more, or keep this as the walkthrough cap.</p>
+    </div>
+  {% endif %}
 </section>
 {% endblock %}
