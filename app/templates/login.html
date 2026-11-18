@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Sign in — Demo Monitoring{% endblock %}
+
+{% block content %}
+<section class="auth-panel">
+  <p class="eyebrow">Sign in</p>
+  <h1>Welcome back</h1>
+  <p class="lede">Use the demo admin account to open the monitoring UI.</p>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul class="flash-list">
+        {% for category, message in messages %}
+          <li class="flash flash-{{ category }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  <form class="auth-form" method="post" action="{{ url_for('main.login') }}">
+    <label for="username">Username</label>
+    <input id="username" name="username" type="text" autocomplete="username" required autofocus>
+
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" autocomplete="current-password" required>
+
+    <button type="submit">Sign in</button>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Home — Demo Monitoring{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <p class="eyebrow">Local Linux demo</p>
+  <h1>Demo Monitoring Infrastructure</h1>
+  <p class="lede">
+    {% if username %}
+      Signed in as <strong>{{ username }}</strong>.
+    {% endif %}
+    Read-only CPU and memory monitoring for local Linux servers — inventory
+    and live metrics come in later steps.
+  </p>
+  <p class="status-pill">Step 1 — basic UI ready</p>
+</section>
+{% endblock %}

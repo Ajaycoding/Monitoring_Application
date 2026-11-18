@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Demo Monitoring{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="{{ url_for('main.home') }}">Demo Monitoring</a>
+      <nav class="nav">
+        {% if session.get('user_id') %}
+          <span class="nav-note">{{ session.get('username') }}</span>
+          <a class="nav-link" href="{{ url_for('main.logout') }}">Sign out</a>
+        {% else %}
+          <span class="nav-note">Local demo</span>
+          <a class="nav-link" href="{{ url_for('main.login') }}">Sign in</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Demo Monitoring Infrastructure — local only</p>
+    </div>
+  </footer>
+</body>
+</html>
